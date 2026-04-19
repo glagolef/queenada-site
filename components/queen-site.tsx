@@ -492,7 +492,7 @@ function HomePage({ metrics }: { metrics: any }) {
       </Container>
 
       <Container className={compact ? "space-y-6 py-16" : "grid gap-6 py-16 lg:grid-cols-2"}>
-        <Panel className="p-8">
+        <Panel className="flex h-full flex-col p-8">
           <SectionEyebrow>Delegation</SectionEyebrow>
           <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Delegate with confidence</h2>
           <p className="mt-4 text-sm leading-7 text-stone-300">
@@ -500,13 +500,13 @@ function HomePage({ metrics }: { metrics: any }) {
           </p>
           <Link
             href={getPageHref("delegate")}
-            className="mt-6 rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
+            className="mt-auto self-end rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
           >
             Open delegation guide
           </Link>
         </Panel>
 
-        <Panel className="p-8">
+        <Panel className="flex h-full flex-col p-8">
           <SectionEyebrow>Governance</SectionEyebrow>
           <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Phil as DRep</h2>
           <p className="mt-4 text-sm leading-7 text-stone-300">
@@ -514,7 +514,7 @@ function HomePage({ metrics }: { metrics: any }) {
           </p>
           <Link
             href={getPageHref("drep")}
-            className="mt-6 rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
+            className="mt-auto self-end rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
           >
             View DRep profile
           </Link>
@@ -733,7 +733,7 @@ function DrepPage() {
           </ul>
         </Panel>
 
-        <Panel className="p-8">
+        <Panel className="flex h-full flex-col p-8">
           <SectionEyebrow>Motivation</SectionEyebrow>
           <p className="mt-4 text-sm leading-7 text-stone-300">{siteConfig.drep.motivation}</p>
           <div className="mt-3 text-sm font-medium text-stone-400">— Phil</div>
@@ -750,7 +750,7 @@ function DrepPage() {
           </div>
           <a
             href={siteConfig.links.govTools}
-            className="mt-6 inline-flex rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
+            className="mt-auto inline-flex self-end rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
           >
             View DRep profile
           </a>
