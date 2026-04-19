@@ -186,11 +186,11 @@ function runSanityChecks() {
 
 runSanityChecks();
 
-function Container({ children, className = "" }) {
+function Container({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto max-w-7xl px-6 lg:px-8 ${className}`}>{children}</div>;
 }
 
-function SectionEyebrow({ children }) {
+function SectionEyebrow({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-gradient-to-r from-fuchsia-300 to-sky-300 bg-clip-text text-sm uppercase tracking-[0.3em] text-transparent">
       {children}
@@ -198,7 +198,7 @@ function SectionEyebrow({ children }) {
   );
 }
 
-function PageHeader({ eyebrow, title, text, compact = false }) {
+function PageHeader({ eyebrow, title, text, compact = false }: { eyebrow: React.ReactNode; title: React.ReactNode; text?: React.ReactNode; compact?: boolean }) {
   return (
     <div className="max-w-3xl">
       <SectionEyebrow>{eyebrow}</SectionEyebrow>
@@ -210,7 +210,7 @@ function PageHeader({ eyebrow, title, text, compact = false }) {
   );
 }
 
-function Panel({ children, className = "" }) {
+function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-3xl border border-white/10 bg-white/10 backdrop-blur-sm shadow-lg shadow-black/20 ${className}`}>
       {children}
@@ -218,7 +218,7 @@ function Panel({ children, className = "" }) {
   );
 }
 
-function StatCard({ label, value, hint }) {
+function StatCard({ label, value, hint }: { label: string; value: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <Panel className="min-w-0 p-5 text-center">
       <div className="break-words text-xs uppercase leading-5 tracking-[0.18em] text-stone-300">{label}</div>
@@ -228,7 +228,7 @@ function StatCard({ label, value, hint }) {
   );
 }
 
-function LinkCard({ href, label, subtext }) {
+function LinkCard({ href, label, subtext }: { href: string; label: string; subtext?: React.ReactNode }) {
   return (
     <a href={href} className="block">
       <Panel className="p-5 transition hover:bg-white/15">
