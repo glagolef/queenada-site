@@ -2,7 +2,13 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-const logoSrc = "https://www.queenada.com/wp-content/uploads/2025/02/queenadalogotransparent.png";
+function getSeasonalLogoSrc() {
+  const now = new Date();
+  const month = now.getMonth();
+  return month === 11 ? "/christmas-queen-512.jpeg" : "/queenadalogotransparent.png";
+}
+
+const logoSrc = getSeasonalLogoSrc();
 
 const POOL_HEX = "b40683f4baad755ff60f26dc73c3e371ac4c5e422feef2fc1f5f29bf";
 const POOL_BECH32 = "pool1ksrg8a964464las0ymw88slrwxkychjz9lh09lqltu5m7nw3pq0";
@@ -178,8 +184,7 @@ function runSanityChecks() {
   if (!siteConfig.delegateSteps.length) throw new Error("Delegate steps must not be empty.");
   if (!siteConfig.recommendedWallets.length) throw new Error("Recommended wallets must not be empty.");
   if (!siteConfig.security.length) throw new Error("Security items must not be empty.");
-  if (!logoSrc.startsWith("http")) throw new Error("Logo source must be a valid URL.");
-  if (!siteConfig.pool.poolHex || !siteConfig.pool.poolBech32) {
+    if (!siteConfig.pool.poolHex || !siteConfig.pool.poolBech32) {
     throw new Error("Pool identifiers must be defined.");
   }
 }
@@ -395,6 +400,9 @@ function Shell({ activePage, setActivePage, children }) {
               </a>
               <a href={siteConfig.brand.twitter} className="hover:text-stone-100">
                 @QueenAdaStaking
+              </a>
+              <a href="/queen_ada_privacy_policy.pdf" className="hover:text-stone-100" target="_blank" rel="noreferrer">
+                Privacy Policy
               </a>
               <span>{siteConfig.brand.location}</span>
             </div>
