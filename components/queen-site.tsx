@@ -328,7 +328,7 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
               <img
                 src={logoSrc}
                 alt="Queen Ada logo"
-                className="h-14 w-14 shrink-0 rounded-2xl border border-white/15 object-contain bg-white/5 p-0 shadow-lg shadow-fuchsia-950/30"
+                className="h-14 w-14 shrink-0 object-contain"
               />
               <div className="min-w-0">
                 <div className="truncate text-xs uppercase tracking-[0.2em] text-stone-400">{siteConfig.brand.name}</div>
