@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import type { SitePageKey } from "../lib/site-config";
 
 function getSeasonalLogoSrc() {
   const now = new Date();
@@ -307,14 +309,13 @@ function useIsCompact() {
   return isCompact;
 }
 
-function Shell({ activePage, setActivePage, children }) {
+function getPageHref(page: SitePageKey) {
+  return page === "home" ? "/" : `/${page}`;
+}
+
+function Shell({ activePage, children }: { activePage: SitePageKey; children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isCompact = useIsCompact();
-
-  const handleNav = (key) => {
-    setActivePage(key);
-    setMobileMenuOpen(false);
-  };
 
   return (
     <div className="min-h-screen bg-slate-900 text-stone-100">
@@ -323,7 +324,7 @@ function Shell({ activePage, setActivePage, children }) {
       <div className="relative z-10 mx-auto transition-all duration-300">
         <header className="sticky top-0 z-20 border-b border-white/10 bg-slate-900/70 backdrop-blur-xl">
           <Container className="flex items-center justify-between gap-3 py-3">
-            <button onClick={() => handleNav("home")} className="flex min-w-0 items-center gap-3 text-left">
+            <Link href={getPageHref("home")} className="flex min-w-0 items-center gap-3 text-left">
               <img
                 src={logoSrc}
                 alt="Queen Ada logo"
@@ -333,7 +334,7 @@ function Shell({ activePage, setActivePage, children }) {
                 <div className="truncate text-xs uppercase tracking-[0.2em] text-stone-400">{siteConfig.brand.name}</div>
                 <div className="text-sm font-semibold text-stone-100">Cardano Stake Pool</div>
               </div>
-            </button>
+            </Link>
 
             {isCompact ? (
               <HamburgerButton open={mobileMenuOpen} onClick={() => setMobileMenuOpen((v) => !v)} />
@@ -341,9 +342,9 @@ function Shell({ activePage, setActivePage, children }) {
               <div className="flex items-center gap-2">
                 <nav className="flex items-center gap-2">
                   {siteConfig.nav.map((item) => (
-                    <button
+                    <Link
                       key={item.key}
-                      onClick={() => handleNav(item.key)}
+                      href={getPageHref(item.key as SitePageKey)}
                       className={[
                         "rounded-2xl px-4 py-2 text-sm transition",
                         activePage === item.key
@@ -352,15 +353,15 @@ function Shell({ activePage, setActivePage, children }) {
                       ].join(" ")}
                     >
                       {item.label}
-                    </button>
+                    </Link>
                   ))}
                 </nav>
-                <button
-                  onClick={() => handleNav("delegate")}
+                <Link
+                  href={getPageHref("delegate")}
                   className="rounded-2xl border border-fuchsia-300/35 bg-gradient-to-r from-fuchsia-500/20 to-sky-500/20 px-4 py-2 text-sm font-medium text-white transition hover:from-fuchsia-500/30 hover:to-sky-500/30"
                 >
                   Delegate to {siteConfig.pool.ticker}
-                </button>
+                </Link>
               </div>
             )}
           </Container>
@@ -370,9 +371,10 @@ function Shell({ activePage, setActivePage, children }) {
               <Container className="py-3">
                 <div className="grid gap-2">
                   {siteConfig.nav.map((item) => (
-                    <button
+                    <Link
                       key={item.key}
-                      onClick={() => handleNav(item.key)}
+                      href={getPageHref(item.key as SitePageKey)}
+                      onClick={() => setMobileMenuOpen(false)}
                       className={[
                         "rounded-2xl px-4 py-3 text-left text-sm transition",
                         activePage === item.key
@@ -381,7 +383,7 @@ function Shell({ activePage, setActivePage, children }) {
                       ].join(" ")}
                     >
                       {item.label}
-                    </button>
+                    </Link>
                   ))}
                 </div>
               </Container>
@@ -413,7 +415,7 @@ function Shell({ activePage, setActivePage, children }) {
   );
 }
 
-function HomePage({ setActivePage, metrics }) {
+function HomePage({ metrics }: { metrics: any }) {
   const compact = useIsCompact();
   const updatedAtLabel = formatUpdatedAt(metrics?.updatedAt);
 
@@ -435,18 +437,18 @@ function HomePage({ setActivePage, metrics }) {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-              <button
-                onClick={() => setActivePage("delegate")}
+              <Link
+                href={getPageHref("delegate")}
                 className="rounded-2xl bg-gradient-to-r from-fuchsia-300 via-violet-200 to-sky-200 px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-fuchsia-500/20 transition hover:opacity-95"
               >
                 How to delegate
-              </button>
-              <button
-                onClick={() => setActivePage("performance")}
+              </Link>
+              <Link
+                href={getPageHref("performance")}
                 className="rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
               >
                 View performance
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -496,12 +498,12 @@ function HomePage({ setActivePage, metrics }) {
           <p className="mt-4 text-sm leading-7 text-stone-300">
             Delegate to {siteConfig.pool.ticker} from the wallet you already use. Your ADA stays in your wallet, delegation does not transfer ownership, and the process usually takes only a few seconds.
           </p>
-          <button
-            onClick={() => setActivePage("delegate")}
+          <Link
+            href={getPageHref("delegate")}
             className="mt-6 rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
           >
             Open delegation guide
-          </button>
+          </Link>
         </Panel>
 
         <Panel className="p-8">
@@ -510,12 +512,12 @@ function HomePage({ setActivePage, metrics }) {
           <p className="mt-4 text-sm leading-7 text-stone-300">
             Beyond running Queen Ada, Phil also contributes as a builder and now as a DRep.
           </p>
-          <button
-            onClick={() => setActivePage("drep")}
+          <Link
+            href={getPageHref("drep")}
             className="mt-6 rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
           >
             View DRep profile
-          </button>
+          </Link>
         </Panel>
       </Container>
 
@@ -823,8 +825,7 @@ function ContactPage() {
   );
 }
 
-export default function QueenAdaSite() {
-  const [activePage, setActivePage] = useState("home");
+export default function QueenAdaSite({ currentPage = "home" }: { currentPage?: SitePageKey }) {
   const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
@@ -862,7 +863,7 @@ export default function QueenAdaSite() {
 
   const pages = useMemo(
     () => ({
-      home: <HomePage setActivePage={setActivePage} metrics={metrics} />,
+      home: <HomePage metrics={metrics} />,
       delegate: <DelegatePage />,
       performance: <PerformancePage metrics={metrics} />,
       fees: <FeesPage metrics={metrics} />,
@@ -874,9 +875,8 @@ export default function QueenAdaSite() {
   );
 
   return (
-    <Shell activePage={activePage} setActivePage={setActivePage}>
-      {pages[activePage]}
+    <Shell activePage={currentPage}>
+      {pages[currentPage]}
     </Shell>
   );
 }
-
