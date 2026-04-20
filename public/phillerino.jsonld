@@ -7,6 +7,7 @@
     "body": {
       "@id": "CIP119:body",
       "@context": {
+        "paymentAddress": "CIP119:paymentAddress",
         "givenName": "CIP119:givenName",
         "image": "CIP119:image",
         "objectives": "CIP119:objectives",
@@ -40,10 +41,11 @@
   "hashAlgorithm": "blake2b-256",
   "body": {
     "givenName": "phillerino",
+    "paymentAddress": "addr1qyak9a22k5jl384jjzx47tr2ul72fhncvuxvzy0dtkmhydu394hq5et7d345rme403e3xem2syeeufetnv4hfd37wyhs4sydta",
     "image": {
       "@type": "ImageObject",
-      "contentUrl": "https://www.queenada.com/drep-photo.png",
-      "sha256": "a9d1519893ddcd2b39e6d84be3a647f1cc5f64575b6089ac23637382224e2bbc"
+      "contentUrl": "https://queenada.com/drep_pfp_800.png",
+      "sha256": "8e02ac372e73f8d1d202a32fb69f4f784742351fd008c09973f9be8965b445c3"
     },
     "objectives": "I want to support Cardano’s long-term success through serious, practical, and principles-driven governance. My priority is to protect decentralization, encourage strong open-source infrastructure, and support proposals that create clear long-term value for the ecosystem.",
     "motivations": "I became a DRep because I care deeply about Cardano’s future and would rather take responsibility for voting directly than outsource that judgment. I also wanted to offer a governance option for QUEEN delegators and others who value a grounded, long-term approach.",

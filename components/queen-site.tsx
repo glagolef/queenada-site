@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { queenSiteContent } from "../lib/site-config";
 import type { SitePageKey } from "../lib/site-config";
 import type { Metrics } from "../lib/metrics";
 
@@ -13,122 +14,7 @@ function getSeasonalLogoSrc() {
 }
 
 const logoSrc = getSeasonalLogoSrc();
-
-const POOL_HEX = "b40683f4baad755ff60f26dc73c3e371ac4c5e422feef2fc1f5f29bf";
-const POOL_BECH32 = "pool1ksrg8a964464las0ymw88slrwxkychjz9lh09lqltu5m7nw3pq0";
-const DREP_ID = "drep1ytu64qt7send5dw7wcd0z5geh4ka6qstgvtgval097hed7qqnqh2n";
-
-const siteConfig = {
-  brand: {
-    name: "Queen Ada",
-    shortName: "QUEEN",
-    tagline: "Secure, reliable Cardano staking since 2019.",
-    description:
-      "Queen Ada is one of the first Cardano stake pools from the ITN and mainnet era, focused on performance, reliability, secure staking, and transparent communication with delegators.",
-    operator: "Phil",
-    location: "Switzerland",
-    email: "info@queenada.com",
-    twitter: "https://twitter.com/QueenAdaStaking",
-    telegram: "https://t.me/+TCIgZgM-Odc1WpFA",
-  },
-  pool: {
-    ticker: "QUEEN",
-    poolHex: POOL_HEX,
-    poolBech32: POOL_BECH32,
-  },
-  links: {
-    adapools: `https://adapools.org/pool/${POOL_HEX}`,
-    cexplorer: `https://cexplorer.io/pool/${POOL_BECH32}`,
-    poolPm: `https://pool.pm/${POOL_HEX}`,
-    cardanoscan: `https://cardanoscan.io/pool/${POOL_HEX}`,
-    govTools: `https://cexplorer.io/drep/${DREP_ID}`,
-    singlePoolAlliance: "https://singlepoolalliance.net/",
-  },
-  nav: [
-    { key: "home", label: "Home" },
-    { key: "delegate", label: "How to Delegate" },
-    { key: "performance", label: "Performance" },
-    { key: "fees", label: "Fees" },
-    { key: "drep", label: "DRep" },
-    { key: "about", label: "About" },
-    { key: "contact", label: "Contact & Security" },
-  ],
-  whyQueen: [
-    {
-      title: "Personally operated",
-      text: "Queen Ada is operated directly by Phil himself, not outsourced to a third-party operator. That gives delegators clearer accountability and stronger real decentralization.",
-    },
-    {
-      title: "Direct communication",
-      text: "Public pool identity, clear fees, and direct communication with Phil through the Telegram group and X.",
-    },
-    {
-      title: "Operational discipline",
-      text: "KES rotations, cardano-node updates, Linux server maintenance, and direct communication with delegators are all handled by Phil himself.",
-    },
-  ],
-  recommendedWallets: [
-    {
-      name: "Vespr",
-      label: "Best for mobile",
-      text: "A polished mobile-first wallet and the best option for users who want a smooth staking experience on mobile.",
-    },
-    {
-      name: "Lace",
-      label: "Best browser extension",
-      text: "A clean browser wallet for users who want a straightforward extension-based staking experience.",
-    },
-    {
-      name: "Eternl",
-      label: "Best for power users",
-      text: "A feature-rich wallet with more advanced options for users who want extra control and flexibility.",
-    },
-  ],
-  delegateSteps: [
-    "Open your Cardano wallet and go to staking or delegation.",
-    "Search for the ticker QUEEN or paste the pool ID.",
-    "Review the pool details, then confirm delegation.",
-    "Keep your ADA in your own wallet and begin earning staking rewards over time.",
-  ],
-  feePoints: [
-    "Current fee structure: 0.69% variable fee + 300 ADA fixed fee.",
-    "On each epoch’s rewards, the fixed fee is deducted first and the 0.69% variable fee is then applied to the remainder. The rest goes to delegators.",
-    "The effective fee varies by epoch because the fixed fee takes a larger share when total rewards are smaller.",
-    "Pledge matters because it signals alignment and long-term commitment from the operator.",
-  ],
-  drep: {
-    intro:
-      "Phil has been a Cardano holder since 2017 and has been actively contributing to the ecosystem since 2019. He believes Cardano is uniquely positioned to bring together Ethereum’s programmability with the security and discipline that made Bitcoin so resilient.",
-    principles: [
-      "Decentralization is paramount.",
-      "Treasury spending should be judged on return on investment for the Cardano ecosystem.",
-      "Proposals that are net positives for Cardano should be supported.",
-      "Proposals that are net drains should be rejected.",
-      "Proposals should generally be rejected unless they are clearly valuable, well-scoped, and aligned with Cardano’s long-term interests.",
-    ],
-    motivation:
-      '"I became a DRep because I care deeply about Cardano’s future and want to vote directly rather than outsource that responsibility. I also wanted to offer a governance option for QUEEN delegators and others who prefer a practical, principles-driven approach."',
-    oppose: [
-      "Treasury spending that is vague, poorly scoped, or weakly justified.",
-      "Proposals that feel like ecosystem extraction rather than ecosystem building.",
-      "Changes that weaken decentralization or long-term discipline.",
-    ],
-  },
-  about: {
-    bio:
-      "Phil is a software engineer, Cardano holder since 2017, and active contributor to the ecosystem since 2019. He has operated the Queen Ada stake pool since the ITN, with a focus on secure, transparent, and reliable staking. He runs the pool himself rather than passing operations on to someone else, which gives delegators clearer accountability and stronger real decentralization. Alongside running QUEEN, he contributes to Cardano as a builder and as a DRep, including as founder of Surf Lending.",
-    philosophy:
-      "Queen Ada was started to support Cardano decentralization through a pool that is run properly, communicates clearly, and stays close to its delegators. QUEEN is also a proud member of the Cardano Single Pool Alliance and committed to only ever running one public pool.",
-  },
-  security: [
-    "Cardano staking is liquid.",
-    "Delegating never involves transferring your ADA.",
-    "Your ADA stays in your wallet.",
-    "Phil will never DM you first asking for wallet details, ADA, your seed phrase, or private keys.",
-    "Never share your seed phrase or private keys.",
-    "Be cautious of impersonators and unofficial support accounts.",
-  ],
-};
+const siteConfig = queenSiteContent;
 
 function formatPercent(value: number | string | null | undefined) {
   const num = Number(value);
@@ -697,8 +583,8 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
           <div className={`mt-5 grid gap-3 ${compact ? "grid-cols-1" : "lg:grid-cols-2"}`}>
             <LinkCard href={siteConfig.links.poolPm} label="Pool.pm" subtext="Current pool activity and public stats." />
             <LinkCard href={siteConfig.links.cardanoscan} label="Cardanoscan" subtext="Pool identity, fees, stake, and block data." />
-            <LinkCard href={siteConfig.links.cexplorer} label="CEXplorer" subtext="QUEEN pool data on CEXplorer." />
-            <LinkCard href={siteConfig.links.adapools} label="AdaPools" subtext="QUEEN pool data on AdaPools." />
+            <LinkCard href={siteConfig.links.cexplorer} label="CEXplorer Rewards" subtext="Reward history and pool data on CEXplorer." />
+            <LinkCard href={siteConfig.links.adastat} label="ADASTAT" subtext="QUEEN pool data on ADASTAT." />
           </div>
         </Panel>
       </div>

@@ -6,4 +6,5 @@ node_modules
 *.tsbuildinfo
 *.bak
 *.swp
+*.swo
 *.pages
