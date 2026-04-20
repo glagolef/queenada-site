@@ -2,6 +2,8 @@ node_modules
 .next
 .env*
 !.env.example
+.DS_Store
+*.tsbuildinfo
 *.bak
 *.swp
 *.pages

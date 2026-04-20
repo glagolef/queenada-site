@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { SitePageKey } from "../lib/site-config";
+import type { Metrics } from "../lib/metrics";
 
 function getSeasonalLogoSrc() {
   const now = new Date();
   const month = now.getMonth();
-  return month === 11 ? "/christmas-queen-512.jpeg" : "/queenadalogotransparent.png";
+  return month === 11 ? "/christmas-queen-512.jpeg" : "/queen-logo-512.png";
 }
 
 const logoSrc = getSeasonalLogoSrc();
@@ -128,22 +130,13 @@ const siteConfig = {
   ],
 };
 
-const KES_START_DATE = new Date("2020-08-31T00:00:00Z");
-const KES_ROTATION_DAYS = 80;
-
-function getKesRotationCount(now = new Date()) {
-  const diffMs = now.getTime() - KES_START_DATE.getTime();
-  const diffDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
-  return Math.floor(diffDays / KES_ROTATION_DAYS);
-}
-
-function formatPercent(value) {
+function formatPercent(value: number | string | null | undefined) {
   const num = Number(value);
   if (!Number.isFinite(num)) return null;
   return `${num.toFixed(2)}%`;
 }
 
-function getEffectiveFee(metrics) {
+function getEffectiveFee(metrics: Metrics | null) {
   if (!metrics) return null;
 
   if (metrics.effectiveFee != null) {
@@ -161,37 +154,27 @@ function getEffectiveFee(metrics) {
   return formatPercent((fees / rewards) * 100);
 }
 
-function isUsableMetrics(data) {
+function isUsableMetrics(data: unknown): data is Metrics {
+  const metrics = data as Partial<Metrics> | null;
+
   return (
     data &&
     typeof data === "object" &&
-    typeof data.liveStake === "string" &&
-    typeof data.saturation === "string" &&
-    typeof data.delegators === "string" &&
-    typeof data.fixedFee === "string" &&
-    typeof data.variableFee === "string" &&
-    typeof data.pledge === "string"
+    typeof metrics?.liveStake === "string" &&
+    typeof metrics.saturation === "string" &&
+    typeof metrics.delegators === "string" &&
+    typeof metrics.fixedFee === "string" &&
+    typeof metrics.variableFee === "string" &&
+    typeof metrics.pledge === "string"
   );
 }
 
-function formatUpdatedAt(updatedAt) {
+function formatUpdatedAt(updatedAt: string | null | undefined) {
   if (!updatedAt) return null;
   const date = new Date(updatedAt);
   if (Number.isNaN(date.getTime())) return null;
   return date.toLocaleString();
 }
-
-function runSanityChecks() {
-  if (!siteConfig.nav.length) throw new Error("Navigation must contain at least one item.");
-  if (!siteConfig.delegateSteps.length) throw new Error("Delegate steps must not be empty.");
-  if (!siteConfig.recommendedWallets.length) throw new Error("Recommended wallets must not be empty.");
-  if (!siteConfig.security.length) throw new Error("Security items must not be empty.");
-    if (!siteConfig.pool.poolHex || !siteConfig.pool.poolBech32) {
-    throw new Error("Pool identifiers must be defined.");
-  }
-}
-
-runSanityChecks();
 
 function Container({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto max-w-7xl px-6 lg:px-8 ${className}`}>{children}</div>;
@@ -235,9 +218,16 @@ function StatCard({ label, value, hint }: { label: string; value: React.ReactNod
   );
 }
 
+function getExternalLinkProps(href: string) {
+  const isExternalHttpLink = href.startsWith("http://") || href.startsWith("https://");
+  return isExternalHttpLink ? { target: "_blank", rel: "noopener noreferrer" } : {};
+}
+
 function LinkCard({ href, label, subtext }: { href: string; label: string; subtext?: React.ReactNode }) {
+  const externalProps = getExternalLinkProps(href);
+
   return (
-    <a href={href} className="block">
+    <a href={href} className="block" {...externalProps}>
       <Panel className="p-5 transition hover:bg-white/15">
         <div className="text-base font-semibold text-stone-100">{label}</div>
         {subtext ? <div className="mt-2 text-sm leading-7 text-stone-300">{subtext}</div> : null}
@@ -278,12 +268,14 @@ function PoolIdCard({ withCopy = false }) {
   );
 }
 
-function HamburgerButton({ open, onClick }) {
+function HamburgerButton({ open, onClick }: { open: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={open ? "Close menu" : "Open menu"}
+      aria-expanded={open}
+      aria-controls="mobile-navigation"
       className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:bg-white/10"
     >
       <div className="flex flex-col gap-1.5">
@@ -316,6 +308,28 @@ function getPageHref(page: SitePageKey) {
 function Shell({ activePage, children }: { activePage: SitePageKey; children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isCompact = useIsCompact();
+  const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <div className="min-h-screen bg-slate-900 text-stone-100">
@@ -325,9 +339,12 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
         <header className="sticky top-0 z-20 border-b border-white/10 bg-slate-900/70 backdrop-blur-xl">
           <Container className="flex items-center justify-between gap-3 py-3">
             <Link href={getPageHref("home")} className="flex min-w-0 items-center gap-3 text-left">
-              <img
+              <Image
                 src={logoSrc}
                 alt="Queen Ada logo"
+                width={56}
+                height={56}
+                priority
                 className="h-14 w-14 shrink-0 object-contain"
               />
               <div className="min-w-0">
@@ -337,7 +354,15 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
             </Link>
 
             {isCompact ? (
-              <HamburgerButton open={mobileMenuOpen} onClick={() => setMobileMenuOpen((v) => !v)} />
+              <div className="flex items-center gap-2">
+                <Link
+                  href={getPageHref("delegate")}
+                  className="rounded-2xl border border-fuchsia-300/35 bg-gradient-to-r from-fuchsia-500/20 to-sky-500/20 px-3 py-2 text-xs font-medium text-white transition hover:from-fuchsia-500/30 hover:to-sky-500/30"
+                >
+                  Delegate
+                </Link>
+                <HamburgerButton open={mobileMenuOpen} onClick={() => setMobileMenuOpen((v) => !v)} />
+              </div>
             ) : (
               <div className="flex items-center gap-2">
                 <nav className="flex items-center gap-2">
@@ -367,9 +392,16 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
           </Container>
 
           {isCompact && mobileMenuOpen ? (
-            <div className="border-t border-white/10 bg-slate-950/80">
+            <div id="mobile-navigation" className="border-t border-white/10 bg-slate-950/80">
               <Container className="py-3">
                 <div className="grid gap-2">
+                  <Link
+                    href={getPageHref("delegate")}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-2xl border border-fuchsia-300/35 bg-gradient-to-r from-fuchsia-500/20 to-sky-500/20 px-4 py-3 text-center text-sm font-medium text-white transition hover:from-fuchsia-500/30 hover:to-sky-500/30"
+                  >
+                    Delegate to {siteConfig.pool.ticker}
+                  </Link>
                   {siteConfig.nav.map((item) => (
                     <Link
                       key={item.key}
@@ -395,12 +427,12 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
 
         <footer className="relative z-10 border-t border-white/10">
           <Container className="flex flex-col gap-4 py-8 text-sm text-stone-400 lg:flex-row lg:items-center lg:justify-between">
-            <div>{siteConfig.brand.name} © 2019–2026</div>
+            <div>{siteConfig.brand.name} © 2019–{currentYear}</div>
             <div className="flex flex-wrap gap-4">
               <a href={`mailto:${siteConfig.brand.email}`} className="hover:text-stone-100">
                 {siteConfig.brand.email}
               </a>
-              <a href={siteConfig.brand.twitter} className="hover:text-stone-100">
+              <a href={siteConfig.brand.twitter} className="hover:text-stone-100" target="_blank" rel="noopener noreferrer">
                 @QueenAdaStaking
               </a>
               <a href="/queen_ada_privacy_policy.pdf" className="hover:text-stone-100" target="_blank" rel="noreferrer">
@@ -415,7 +447,7 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
   );
 }
 
-function HomePage({ metrics }: { metrics: any }) {
+function HomePage({ metrics }: { metrics: Metrics | null }) {
   const compact = useIsCompact();
   const updatedAtLabel = formatUpdatedAt(metrics?.updatedAt);
 
@@ -604,10 +636,11 @@ function DelegatePage() {
   );
 }
 
-function PerformancePage({ metrics }) {
+function PerformancePage({ metrics }: { metrics: Metrics | null }) {
   const compact = useIsCompact();
   const effectiveFee = getEffectiveFee(metrics) ?? "—";
   const updatedAtLabel = formatUpdatedAt(metrics?.updatedAt);
+  const kesRotations = metrics?.kesRotations != null ? String(metrics.kesRotations) : "—";
   const metricCards = compact
     ? [
         { label: "Live stake", value: metrics?.liveStake ?? "—" },
@@ -619,7 +652,7 @@ function PerformancePage({ metrics }) {
         { label: "Fixed fee", value: metrics?.fixedFee ?? "—" },
         { label: "Variable fee", value: metrics?.variableFee ?? "—" },
         { label: "Effective fee", value: effectiveFee },
-        { label: "KES Rotations", value: String(getKesRotationCount()) },
+        { label: "KES Rotations", value: kesRotations },
       ]
     : [
         { label: "Live stake", value: metrics?.liveStake ?? "—" },
@@ -630,7 +663,7 @@ function PerformancePage({ metrics }) {
         { label: "Lifetime blocks", value: metrics?.lifetimeBlocks ?? "—" },
         { label: "Fixed fee", value: metrics?.fixedFee ?? "—" },
         { label: "Variable fee", value: metrics?.variableFee ?? "—" },
-        { label: "KES Rotations", value: String(getKesRotationCount()) },
+        { label: "KES Rotations", value: kesRotations },
       ];
 
   return (
@@ -673,9 +706,13 @@ function PerformancePage({ metrics }) {
   );
 }
 
-function FeesPage({ metrics }) {
+function FeesPage({ metrics }: { metrics: Metrics | null }) {
   const compact = useIsCompact();
   const effectiveFee = getEffectiveFee(metrics) ?? "—";
+  const feeSummary =
+    metrics?.variableFee && metrics?.fixedFee
+      ? `Current fee structure: ${metrics.variableFee} variable fee + ${metrics.fixedFee} fixed fee.`
+      : siteConfig.feePoints[0];
 
   return (
     <Container className="relative z-10 py-20">
@@ -700,7 +737,7 @@ function FeesPage({ metrics }) {
         <Panel className="p-8">
           <SectionEyebrow>How it works</SectionEyebrow>
           <div className="mt-5 space-y-4 text-sm leading-7 text-stone-300">
-            {siteConfig.feePoints.map((point) => (
+            {[feeSummary, ...siteConfig.feePoints.slice(1)].map((point) => (
               <p key={point}>{point}</p>
             ))}
           </div>
@@ -750,6 +787,8 @@ function DrepPage() {
           </div>
           <a
             href={siteConfig.links.govTools}
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-auto inline-flex self-end rounded-2xl border border-violet-300/20 bg-violet-300/5 px-5 py-3 text-sm font-semibold text-stone-100 transition hover:bg-white/10"
           >
             View DRep profile
@@ -826,7 +865,7 @@ function ContactPage() {
 }
 
 export default function QueenAdaSite({ currentPage = "home" }: { currentPage?: SitePageKey }) {
-  const [metrics, setMetrics] = useState(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
 
   useEffect(() => {
     let cancelled = false;

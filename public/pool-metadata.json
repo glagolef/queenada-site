@@ -2,6 +2,6 @@
   "name": "Queen Ada",
   "ticker": "QUEEN",
   "description": "Independent Cardano stake pool operated by Phil since the ITN era. QUEEN is committed to running only one public pool, with a focus on reliability, decentralization, and clear communication.",
-  "homepage": "https://v2.queenada.com",
-  "extended": "https://v2.queenada.com/pool-extended.json"
+  "homepage": "https://www.queenada.com",
+  "extended": "https://www.queenada.com/pool-extended.json"
 }

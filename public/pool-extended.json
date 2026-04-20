@@ -1,7 +1,7 @@
 {
   "info": {
-    "url_png_icon_64x64": "https://v2.queenada.com/queen-favicon-64.png",
-    "url_png_logo": "https://v2.queenada.com/queen-logo-transparent.png",
+    "url_png_icon_64x64": "https://www.queenada.com/queen-favicon-64.png",
+    "url_png_logo": "https://www.queenada.com/queen-logo-512.png",
     "location": "Switzerland",
     "social": {
       "twitter_handle": "QueenAdaStaking",
@@ -13,7 +13,7 @@
     }
   },
   "myopic": {
-    "homepage": "https://v2.queenada.com",
+    "homepage": "https://www.queenada.com",
     "telegram": "https://t.me/+TCIgZgM-Odc1WpFA",
     "twitter": "https://twitter.com/QueenAdaStaking",
     "email": "info@queenada.com",
