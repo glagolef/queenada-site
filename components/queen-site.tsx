@@ -1,21 +1,18 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { queenSiteContent } from "../lib/site-config";
 import type { SitePageKey } from "../lib/site-config";
-import { isUsableMetrics, type Metrics } from "../lib/metrics";
+import type { Metrics } from "../lib/metrics";
 
 function getSeasonalLogoSrc() {
   const now = new Date();
   const month = now.getMonth();
   return month === 11 ? "/christmas-queen-512.jpeg" : "/queen-logo-512.png";
 }
-
-const logoSrc = getSeasonalLogoSrc();
 const siteConfig = queenSiteContent;
-const METRICS_URL = "/api/metrics";
 
 function formatPercent(value: number | string | null | undefined) {
   const num = Number(value);
@@ -60,11 +57,11 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function PageHeader({ eyebrow, title, text, compact = false }: { eyebrow: React.ReactNode; title: React.ReactNode; text?: React.ReactNode; compact?: boolean }) {
+function PageHeader({ eyebrow, title, text }: { eyebrow: React.ReactNode; title: React.ReactNode; text?: React.ReactNode }) {
   return (
     <div className="max-w-3xl">
       <SectionEyebrow>{eyebrow}</SectionEyebrow>
-      <h1 className={`mt-4 font-semibold tracking-tight ${compact ? "text-3xl" : "text-4xl sm:text-5xl"}`}>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
         {title}
       </h1>
       {text ? <p className="mt-4 text-base leading-8 text-stone-300">{text}</p> : null}
@@ -159,28 +156,14 @@ function HamburgerButton({ open, onClick }: { open: boolean; onClick: () => void
   );
 }
 
-function useIsCompact() {
-  const getCompact = () => (typeof window !== "undefined" ? window.innerWidth < 1024 : false);
-  const [isCompact, setIsCompact] = useState(getCompact);
-
-  useEffect(() => {
-    const onResize = () => setIsCompact(getCompact());
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  return isCompact;
-}
-
 function getPageHref(page: SitePageKey) {
   return page === "home" ? "/" : `/${page}`;
 }
 
 function Shell({ activePage, children }: { activePage: SitePageKey; children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isCompact = useIsCompact();
   const currentYear = new Date().getFullYear();
+  const logoSrc = getSeasonalLogoSrc();
 
   useEffect(() => {
     if (!mobileMenuOpen) {
@@ -216,6 +199,7 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
                 alt="Queen Ada logo"
                 width={56}
                 height={56}
+                sizes="56px"
                 priority
                 className="h-14 w-14 shrink-0 object-contain"
               />
@@ -225,18 +209,16 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
               </div>
             </Link>
 
-            {isCompact ? (
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 lg:hidden">
                 <Link
                   href={getPageHref("delegate")}
                   className="rounded-2xl border border-fuchsia-300/35 bg-gradient-to-r from-fuchsia-500/20 to-sky-500/20 px-3 py-2 text-xs font-medium text-white transition hover:from-fuchsia-500/30 hover:to-sky-500/30"
                 >
-                  Delegate
+                  Stake with QUEEN
                 </Link>
                 <HamburgerButton open={mobileMenuOpen} onClick={() => setMobileMenuOpen((v) => !v)} />
               </div>
-            ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden items-center gap-2 lg:flex">
                 <nav className="flex items-center gap-2">
                   {siteConfig.nav.map((item) => (
                     <Link
@@ -260,11 +242,10 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
                   Delegate to {siteConfig.pool.ticker}
                 </Link>
               </div>
-            )}
           </Container>
 
-          {isCompact && mobileMenuOpen ? (
-            <div id="mobile-navigation" className="border-t border-white/10 bg-slate-950/80">
+          {mobileMenuOpen ? (
+            <div id="mobile-navigation" className="border-t border-white/10 bg-slate-950/80 lg:hidden">
               <Container className="py-3">
                 <div className="grid gap-2">
                   <Link
@@ -320,15 +301,14 @@ function Shell({ activePage, children }: { activePage: SitePageKey; children: Re
 }
 
 function HomePage({ metrics }: { metrics: Metrics | null }) {
-  const compact = useIsCompact();
   const updatedAtLabel = formatUpdatedAt(metrics?.updatedAt);
 
   return (
     <>
       <Container className="pb-16 pt-12 lg:pb-24 lg:pt-24">
-        <div className={compact ? "" : "grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12"}>
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">
           <div className="max-w-3xl">
-            <h1 className={`font-semibold leading-tight tracking-tight ${compact ? "text-4xl" : "text-4xl sm:text-5xl lg:text-6xl"}`}>
+            <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               <span className="bg-gradient-to-r from-white via-fuchsia-100 to-sky-100 bg-clip-text text-transparent">
                 {siteConfig.brand.tagline}
               </span>
@@ -356,36 +336,34 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
             </div>
           </div>
 
-          <Panel className={`${compact ? "mt-10" : ""} bg-white/5 p-5 shadow-2xl shadow-fuchsia-950/30 sm:p-6`}>
+          <Panel className="mt-10 bg-white/5 p-5 shadow-2xl shadow-fuchsia-950/30 sm:p-6 lg:mt-0">
             <div className="flex flex-col gap-3">
               <div>
                 <div className="text-sm uppercase tracking-[0.25em] text-stone-200">Live Pool Snapshot</div>
                 <div className="mt-2 text-2xl font-semibold text-white">{siteConfig.brand.name}</div>
               </div>
-              <div className="w-fit rounded-2xl border border-sky-300/25 bg-sky-300/10 px-3 py-1 text-sm text-sky-200">
-                Live pool data
-              </div>
+              {updatedAtLabel ? <div className="text-sm text-stone-400">Updated: {updatedAtLabel}</div> : null}
             </div>
 
-            <div className={`mt-6 grid gap-4 ${compact ? "grid-cols-2" : "sm:grid-cols-2"}`}>
+            <div className="mt-6 grid grid-cols-2 gap-4">
               <StatCard label="Live stake" value={metrics?.liveStake ?? "—"} />
               <StatCard label="Saturation" value={metrics?.saturation ?? "—"} />
               <StatCard label="Delegators" value={metrics?.delegators ?? "—"} />
               <StatCard label="Lifetime blocks" value={metrics?.lifetimeBlocks ?? "—"} />
+              <StatCard label="Effective fee" value={getEffectiveFee(metrics) ?? "—"} />
               <StatCard label="Variable fee" value={metrics?.variableFee ?? "—"} />
-              <StatCard label="Fixed fee" value={metrics?.fixedFee ?? "—"} />
+              <StatCard label="Fixed fee" value={metrics?.fixedFee ?? "—"} hint="Updated hourly" />
             </div>
 
             <div className="mt-4">
               <PoolIdCard />
             </div>
-            {updatedAtLabel ? <div className="mt-4 text-center text-xs text-stone-400">Updated: {updatedAtLabel}</div> : null}
           </Panel>
         </div>
       </Container>
 
       <Container className="pb-6">
-        <div className={`grid gap-6 ${compact ? "grid-cols-1" : "lg:grid-cols-3"}`}>
+        <div className="grid gap-6 lg:grid-cols-3">
           {siteConfig.whyQueen.map((item) => (
             <Panel key={item.title} className="p-6">
               <h3 className="text-xl font-semibold">{item.title}</h3>
@@ -395,7 +373,7 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
         </div>
       </Container>
 
-      <Container className={compact ? "space-y-6 py-16" : "grid gap-6 py-16 lg:grid-cols-2"}>
+      <Container className="space-y-6 py-16 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         <Panel className="flex h-full flex-col p-8">
           <SectionEyebrow>Delegation</SectionEyebrow>
           <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Delegate with confidence</h2>
@@ -429,7 +407,7 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
         <Panel className="p-8">
           <SectionEyebrow>Cardano staking resources</SectionEyebrow>
           <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Guides for informed delegators</h2>
-          <div className={`mt-6 grid gap-3 ${compact ? "grid-cols-1" : "lg:grid-cols-3"}`}>
+          <div className="mt-6 grid grid-cols-1 gap-3 lg:grid-cols-3">
             <LinkCard
               href="/best-cardano-stake-pool"
               label="Best Cardano Stake Pool Criteria"
@@ -463,14 +441,11 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
 }
 
 function DelegatePage() {
-  const compact = useIsCompact();
-
   return (
     <Container className="relative z-10 py-20">
-      <div className={compact ? "space-y-8" : "grid gap-8 lg:grid-cols-[0.95fr_1.05fr]"}>
+      <div className="space-y-8 lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:gap-8 lg:space-y-0">
         <div>
           <PageHeader
-            compact={compact}
             eyebrow="How to delegate"
             title="Delegate to QUEEN in seconds"
             text="Choose a wallet, search for QUEEN, confirm delegation, and keep full custody of your ADA throughout the process."
@@ -501,7 +476,7 @@ function DelegatePage() {
             <p className="mt-3 text-sm leading-7 text-stone-300">
               These are the best options for most users depending on how they prefer to stake.
             </p>
-            <div className={`mt-5 grid gap-4 ${compact ? "grid-cols-1" : "lg:grid-cols-3"}`}>
+            <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
               {siteConfig.recommendedWallets.map((wallet) => (
                 <Panel key={wallet.name} className="bg-white/5 p-5">
                   <div className="text-lg font-semibold text-stone-100">{wallet.name}</div>
@@ -533,39 +508,25 @@ function DelegatePage() {
 }
 
 function PerformancePage({ metrics }: { metrics: Metrics | null }) {
-  const compact = useIsCompact();
   const effectiveFee = getEffectiveFee(metrics) ?? "—";
   const updatedAtLabel = formatUpdatedAt(metrics?.updatedAt);
   const kesRotations = metrics?.kesRotations != null ? String(metrics.kesRotations) : "—";
-  const metricCards = compact
-    ? [
-        { label: "Live stake", value: metrics?.liveStake ?? "—" },
-        { label: "Saturation", value: metrics?.saturation ?? "—" },
-        { label: "Delegators", value: metrics?.delegators ?? "—" },
-        { label: "Pledge", value: metrics?.pledge ?? "—" },
-        { label: "Current epoch blocks", value: metrics?.currentEpochBlocks ?? "—" },
-        { label: "Lifetime blocks", value: metrics?.lifetimeBlocks ?? "—" },
-        { label: "Fixed fee", value: metrics?.fixedFee ?? "—" },
-        { label: "Variable fee", value: metrics?.variableFee ?? "—" },
-        { label: "Effective fee", value: effectiveFee },
-        { label: "KES Rotations", value: kesRotations },
-      ]
-    : [
-        { label: "Live stake", value: metrics?.liveStake ?? "—" },
-        { label: "Saturation", value: metrics?.saturation ?? "—" },
-        { label: "Delegators", value: metrics?.delegators ?? "—" },
-        { label: "Pledge", value: metrics?.pledge ?? "—" },
-        { label: "Current epoch blocks", value: metrics?.currentEpochBlocks ?? "—" },
-        { label: "Lifetime blocks", value: metrics?.lifetimeBlocks ?? "—" },
-        { label: "Fixed fee", value: metrics?.fixedFee ?? "—" },
-        { label: "Variable fee", value: metrics?.variableFee ?? "—" },
-        { label: "KES Rotations", value: kesRotations },
-      ];
+  const metricCards = [
+    { label: "Live stake", value: metrics?.liveStake ?? "—" },
+    { label: "Saturation", value: metrics?.saturation ?? "—" },
+    { label: "Delegators", value: metrics?.delegators ?? "—" },
+    { label: "Pledge", value: metrics?.pledge ?? "—" },
+    { label: "Current epoch blocks", value: metrics?.currentEpochBlocks ?? "—" },
+    { label: "Lifetime blocks", value: metrics?.lifetimeBlocks ?? "—" },
+    { label: "Fixed fee", value: metrics?.fixedFee ?? "—" },
+    { label: "Variable fee", value: metrics?.variableFee ?? "—" },
+    { label: "Effective fee", value: effectiveFee },
+    { label: "KES Rotations", value: kesRotations },
+  ];
 
   return (
     <Container className="relative z-10 py-20">
       <PageHeader
-        compact={compact}
         eyebrow="Performance"
         title="Pool Metrics"
         text={
@@ -575,13 +536,13 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
         }
       />
 
-      <div className={`mt-10 grid gap-4 ${compact ? "grid-cols-2" : "lg:grid-cols-2 xl:grid-cols-3"}`}>
+      <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-2 xl:grid-cols-3">
         {metricCards.map((metric) => (
           <StatCard key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </div>
 
-      <div className={compact ? "mt-10 space-y-6" : "mt-10 grid gap-6 lg:grid-cols-2"}>
+      <div className="mt-10 space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         <Panel className="p-8">
           <SectionEyebrow>Why these metrics matter</SectionEyebrow>
           <p className="mt-4 text-sm leading-7 text-stone-300">
@@ -590,7 +551,7 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
         </Panel>
         <Panel className="p-8">
           <SectionEyebrow>QUEEN on Cardano explorers</SectionEyebrow>
-          <div className={`mt-5 grid gap-3 ${compact ? "grid-cols-1" : "lg:grid-cols-2"}`}>
+          <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-2">
             <LinkCard href={siteConfig.links.poolPm} label="Pool.pm" subtext="Current pool activity and public stats." />
             <LinkCard href={siteConfig.links.cardanoscan} label="Cardanoscan" subtext="Pool identity, fees, stake, and block data." />
             <LinkCard href={siteConfig.links.cexplorer} label="CEXplorer Rewards" subtext="Reward history and pool data on CEXplorer." />
@@ -603,7 +564,6 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
 }
 
 function FeesPage({ metrics }: { metrics: Metrics | null }) {
-  const compact = useIsCompact();
   const effectiveFee = getEffectiveFee(metrics) ?? "—";
   const feeSummary =
     metrics?.variableFee && metrics?.fixedFee
@@ -613,13 +573,12 @@ function FeesPage({ metrics }: { metrics: Metrics | null }) {
   return (
     <Container className="relative z-10 py-20">
       <PageHeader
-        compact={compact}
         eyebrow="Fees"
         title="Transparent fees, explained clearly"
         text="QUEEN’s fee structure is shown plainly because trust comes from specifics, not vague claims about being cheap."
       />
 
-      <div className={compact ? "mt-10 space-y-6" : "mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]"}>
+      <div className="mt-10 space-y-6 lg:grid lg:grid-cols-[0.9fr_1.1fr] lg:gap-6 lg:space-y-0">
         <Panel className="p-8">
           <StatCard label="Pledge" value={metrics?.pledge ?? "—"} />
           <div className="mt-4" />
@@ -644,18 +603,15 @@ function FeesPage({ metrics }: { metrics: Metrics | null }) {
 }
 
 function DrepPage() {
-  const compact = useIsCompact();
-
   return (
     <Container className="relative z-10 py-20">
       <PageHeader
-        compact={compact}
         eyebrow="DRep"
         title="Why Phil became a DRep"
         text="Beyond running Queen Ada, Phil also contributes as a builder and now as a DRep."
       />
 
-      <div className={compact ? "mt-10 space-y-6" : "mt-10 grid gap-6 lg:grid-cols-2"}>
+      <div className="mt-10 space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         <Panel className="p-8">
           <SectionEyebrow>Principles</SectionEyebrow>
           <p className="mt-4 text-sm leading-7 text-stone-300">{siteConfig.drep.intro}</p>
@@ -696,18 +652,15 @@ function DrepPage() {
 }
 
 function AboutPage() {
-  const compact = useIsCompact();
-
   return (
     <Container className="relative z-10 py-20">
       <PageHeader
-        compact={compact}
         eyebrow="About"
         title="Who runs Queen Ada"
         text="Phil runs Queen Ada. He is a software engineer, Cardano holder since 2017, and has been contributing to the ecosystem since 2019."
       />
 
-      <div className={compact ? "mt-10 space-y-6" : "mt-10 grid gap-6 lg:grid-cols-2"}>
+      <div className="mt-10 space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         <Panel className="p-8">
           <SectionEyebrow>Phil</SectionEyebrow>
           <p className="mt-4 text-sm leading-7 text-stone-300">{siteConfig.about.bio}</p>
@@ -716,7 +669,7 @@ function AboutPage() {
         <Panel className="p-8">
           <SectionEyebrow>Why QUEEN exists</SectionEyebrow>
           <p className="mt-4 text-sm leading-7 text-stone-300">{siteConfig.about.philosophy}</p>
-          <div className={`mt-6 grid gap-4 ${compact ? "grid-cols-1" : "lg:grid-cols-2"}`}>
+          <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <StatCard label="Crypto / Cardano" value="Since 2017" />
             <StatCard label="QUEEN" value="Since the ITN" hint="December 2019" />
           </div>
@@ -727,19 +680,16 @@ function AboutPage() {
 }
 
 function ContactPage() {
-  const compact = useIsCompact();
-
   return (
     <Container className="relative z-10 py-20">
-      <div className={compact ? "space-y-6" : "grid gap-6 lg:grid-cols-2"}>
+      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
         <Panel className="p-8">
           <PageHeader
-            compact={compact}
             eyebrow="Contact"
             title="Useful contact points"
             text="Keep contact options clear and high-signal. Direct access helps reinforce trust and accountability."
           />
-          <div className={`mt-8 grid gap-3 ${compact ? "grid-cols-1" : "lg:grid-cols-2"}`}>
+          <div className="mt-8 grid grid-cols-1 gap-3 lg:grid-cols-2">
             <LinkCard href={siteConfig.brand.telegram} label="Telegram" subtext="Community access and discussion." />
             <LinkCard href={siteConfig.brand.twitter} label="X / Twitter" subtext="Public updates and commentary." />
             <LinkCard href={`mailto:${siteConfig.brand.email}`} label="Email" subtext="Feel free to get in touch directly." />
@@ -760,65 +710,22 @@ function ContactPage() {
   );
 }
 
-export default function QueenAdaSite({ currentPage = "home" }: { currentPage?: SitePageKey }) {
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadMetrics() {
-      try {
-        const liveRes = await fetch(METRICS_URL);
-        if (!liveRes.ok) throw new Error(`Failed to load metrics API: ${liveRes.status}`);
-        const liveData = await liveRes.json();
-        if (!isUsableMetrics(liveData)) throw new Error("Metrics API payload is malformed");
-        if (!cancelled) setMetrics(liveData);
-        return;
-      } catch (error) {
-        console.error("Failed to load metrics API, trying local fallback", error);
-      }
-
-      try {
-        const localRes = await fetch("/metrics.json", { cache: "no-store" });
-        if (!localRes.ok) throw new Error(`Failed to load metrics.json: ${localRes.status}`);
-        const localData = await localRes.json();
-        if (!isUsableMetrics(localData)) throw new Error("metrics.json is malformed");
-        if (!cancelled) setMetrics(localData);
-        return;
-      } catch (error) {
-        console.error("Failed to load metrics.json, trying metrics-default.json", error);
-      }
-
-      try {
-        const fallbackRes = await fetch("/metrics-default.json", { cache: "no-store" });
-        if (!fallbackRes.ok) throw new Error(`Failed to load metrics-default.json: ${fallbackRes.status}`);
-        const fallbackData = await fallbackRes.json();
-        if (!isUsableMetrics(fallbackData)) throw new Error("metrics-default.json is malformed");
-        if (!cancelled) setMetrics(fallbackData);
-      } catch (error) {
-        console.error("Failed to load metrics-default.json", error);
-      }
-    }
-
-    loadMetrics();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const pages = useMemo(
-    () => ({
-      home: <HomePage metrics={metrics} />,
-      delegate: <DelegatePage />,
-      performance: <PerformancePage metrics={metrics} />,
-      fees: <FeesPage metrics={metrics} />,
-      drep: <DrepPage />,
-      about: <AboutPage />,
-      contact: <ContactPage />,
-    }),
-    [metrics],
-  );
+export default function QueenAdaSite({
+  currentPage = "home",
+  metrics = null,
+}: {
+  currentPage?: SitePageKey;
+  metrics?: Metrics | null;
+}) {
+  const pages = {
+    home: <HomePage metrics={metrics} />,
+    delegate: <DelegatePage />,
+    performance: <PerformancePage metrics={metrics} />,
+    fees: <FeesPage metrics={metrics} />,
+    drep: <DrepPage />,
+    about: <AboutPage />,
+    contact: <ContactPage />,
+  };
 
   return (
     <Shell activePage={currentPage}>

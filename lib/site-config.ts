@@ -6,7 +6,7 @@ export const siteConfig = {
   description:
     "Delegate ADA to QUEEN, an independent Cardano stake pool focused on secure and reliable staking, transparent fees, and long-term decentralization.",
   url: "https://www.queenada.com",
-  ogImage: "/queenadalogotransparent.png",
+  ogImage: "/queen-og-1200x630.jpg",
   twitterHandle: "@QueenAdaStaking",
   email: "info@queenada.com",
 };
