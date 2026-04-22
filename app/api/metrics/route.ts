@@ -12,8 +12,19 @@ async function loadBundledMetrics(filename: string) {
   return JSON.parse(content);
 }
 
+function createMetricsResponse(data: unknown, source: string, upstreamConfigured: boolean) {
+  return NextResponse.json(data, {
+    headers: {
+      "Cache-Control": RESPONSE_CACHE_CONTROL,
+      "X-Metrics-Source": source,
+      "X-Metrics-Upstream-Configured": String(upstreamConfigured),
+    },
+  });
+}
+
 export async function GET() {
   const upstreamUrl = process.env.METRICS_UPSTREAM_URL;
+  const upstreamConfigured = Boolean(upstreamUrl);
 
   if (upstreamUrl) {
     try {
@@ -30,11 +41,7 @@ export async function GET() {
         throw new Error("Upstream metrics payload is malformed");
       }
 
-      return NextResponse.json(upstreamMetrics, {
-        headers: {
-          "Cache-Control": RESPONSE_CACHE_CONTROL,
-        },
-      });
+      return createMetricsResponse(upstreamMetrics, "upstream", upstreamConfigured);
     } catch (error) {
       console.error("Failed to load upstream metrics, falling back to bundled snapshot", error);
     }
@@ -47,11 +54,7 @@ export async function GET() {
         throw new Error(`${filename} is malformed`);
       }
 
-      return NextResponse.json(bundledMetrics, {
-        headers: {
-          "Cache-Control": RESPONSE_CACHE_CONTROL,
-        },
-      });
+      return createMetricsResponse(bundledMetrics, filename, upstreamConfigured);
     } catch (error) {
       console.error(`Failed to load ${filename}`, error);
     }
@@ -63,6 +66,8 @@ export async function GET() {
       status: 503,
       headers: {
         "Cache-Control": "no-store",
+        "X-Metrics-Source": "unavailable",
+        "X-Metrics-Upstream-Configured": String(upstreamConfigured),
       },
     },
   );
