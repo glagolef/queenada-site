@@ -34,3 +34,18 @@ export type Metrics = {
   updatedAt: string | null;
   source: string | null;
 };
+
+export function isUsableMetrics(data: unknown): data is Metrics {
+  const metrics = data as Partial<Metrics> | null;
+
+  return (
+    data != null &&
+    typeof data === "object" &&
+    typeof metrics?.liveStake === "string" &&
+    typeof metrics.saturation === "string" &&
+    typeof metrics.delegators === "string" &&
+    typeof metrics.fixedFee === "string" &&
+    typeof metrics.variableFee === "string" &&
+    typeof metrics.pledge === "string"
+  );
+}

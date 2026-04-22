@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { queenSiteContent } from "../lib/site-config";
 import type { SitePageKey } from "../lib/site-config";
-import type { Metrics } from "../lib/metrics";
+import { isUsableMetrics, type Metrics } from "../lib/metrics";
 
 function getSeasonalLogoSrc() {
   const now = new Date();
@@ -15,6 +15,7 @@ function getSeasonalLogoSrc() {
 
 const logoSrc = getSeasonalLogoSrc();
 const siteConfig = queenSiteContent;
+const METRICS_URL = "/api/metrics";
 
 function formatPercent(value: number | string | null | undefined) {
   const num = Number(value);
@@ -38,21 +39,6 @@ function getEffectiveFee(metrics: Metrics | null) {
   }
 
   return formatPercent((fees / rewards) * 100);
-}
-
-function isUsableMetrics(data: unknown): data is Metrics {
-  const metrics = data as Partial<Metrics> | null;
-
-  return (
-    data &&
-    typeof data === "object" &&
-    typeof metrics?.liveStake === "string" &&
-    typeof metrics.saturation === "string" &&
-    typeof metrics.delegators === "string" &&
-    typeof metrics.fixedFee === "string" &&
-    typeof metrics.variableFee === "string" &&
-    typeof metrics.pledge === "string"
-  );
 }
 
 function formatUpdatedAt(updatedAt: string | null | undefined) {
@@ -782,14 +768,25 @@ export default function QueenAdaSite({ currentPage = "home" }: { currentPage?: S
 
     async function loadMetrics() {
       try {
-        const liveRes = await fetch("/metrics.json", { cache: "no-store" });
-        if (!liveRes.ok) throw new Error(`Failed to load metrics.json: ${liveRes.status}`);
+        const liveRes = await fetch(METRICS_URL);
+        if (!liveRes.ok) throw new Error(`Failed to load metrics API: ${liveRes.status}`);
         const liveData = await liveRes.json();
-        if (!isUsableMetrics(liveData)) throw new Error("metrics.json is malformed");
+        if (!isUsableMetrics(liveData)) throw new Error("Metrics API payload is malformed");
         if (!cancelled) setMetrics(liveData);
         return;
       } catch (error) {
-        console.error("Failed to load metrics.json, trying fallback", error);
+        console.error("Failed to load metrics API, trying local fallback", error);
+      }
+
+      try {
+        const localRes = await fetch("/metrics.json", { cache: "no-store" });
+        if (!localRes.ok) throw new Error(`Failed to load metrics.json: ${localRes.status}`);
+        const localData = await localRes.json();
+        if (!isUsableMetrics(localData)) throw new Error("metrics.json is malformed");
+        if (!cancelled) setMetrics(localData);
+        return;
+      } catch (error) {
+        console.error("Failed to load metrics.json, trying metrics-default.json", error);
       }
 
       try {
