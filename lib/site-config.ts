@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 
 export const siteConfig = {
   name: "Queen Ada",
-  title: "Queen Ada | Cardano Stake Pool",
+  title: "Queen Ada (QUEEN) | Cardano Stake Pool",
   description:
-    "Queen Ada is a Cardano stake pool focused on secure, reliable staking, transparent communication, and long-term decentralization.",
-  url: "https://queenada.com",
+    "Delegate ADA to QUEEN, an independent Cardano stake pool focused on secure and reliable staking, transparent fees, and long-term decentralization.",
+  url: "https://www.queenada.com",
   ogImage: "/queenadalogotransparent.png",
   twitterHandle: "@QueenAdaStaking",
   email: "info@queenada.com",
@@ -134,38 +134,59 @@ export const sitePages = [
   {
     key: "delegate",
     href: "/delegate",
-    title: "How to Delegate to QUEEN | Queen Ada",
-    description: "Learn how to delegate to the QUEEN Cardano stake pool while keeping full custody of your ADA.",
+    title: "How to Delegate ADA to QUEEN | Cardano Staking Guide",
+    description: "Step-by-step Cardano staking guide to delegate ADA to QUEEN while keeping full custody of your wallet.",
   },
   {
     key: "performance",
     href: "/performance",
-    title: "QUEEN Pool Performance | Queen Ada",
-    description: "Review QUEEN pool metrics, explorer links, and live performance indicators for Cardano staking.",
+    title: "QUEEN Performance | Cardano Stake Pool Metrics",
+    description: "Track QUEEN live stake, saturation, delegators, blocks, and explorer links for Cardano staking performance.",
   },
   {
     key: "fees",
     href: "/fees",
-    title: "QUEEN Pool Fees | Queen Ada",
-    description: "See QUEEN's pledge, fixed fee, variable fee, and how the pool fee structure works.",
+    title: "QUEEN Fees and Pledge | Cardano Stake Pool",
+    description: "See QUEEN pool pledge, fixed fee, variable fee, and how Cardano stake pool fee mechanics affect rewards.",
   },
   {
     key: "drep",
     href: "/drep",
-    title: "Phil as DRep | Queen Ada",
-    description: "Read Phil's DRep principles, motivation, and governance approach for Cardano.",
+    title: "Phil as DRep | Cardano Governance",
+    description: "Read Phil's DRep principles, voting approach, and governance priorities in the Cardano ecosystem.",
   },
   {
     key: "about",
     href: "/about",
-    title: "About Queen Ada | Queen Ada",
-    description: "Learn who runs Queen Ada and why the pool exists.",
+    title: "About Queen Ada | Independent Cardano Stake Pool",
+    description: "Meet Phil, the operator of QUEEN, and learn why this independent Cardano stake pool was created.",
   },
   {
     key: "contact",
     href: "/contact",
-    title: "Contact and Security | Queen Ada",
-    description: "Find Queen Ada contact details and important wallet security reminders.",
+    title: "Contact and Security | Queen Ada Stake Pool",
+    description: "Contact QUEEN stake pool and review wallet security best practices for safe Cardano delegation.",
+  },
+  {
+    key: "bestCardanoStakePool",
+    href: "/best-cardano-stake-pool",
+    title: "Best Cardano Stake Pool Criteria | Why Delegators Choose QUEEN",
+    description:
+      "Compare what matters most when choosing a Cardano stake pool: reliability, fees, decentralization, communication, and operator accountability.",
+  },
+  {
+    key: "cardanoStakingFeesExplained",
+    href: "/cardano-staking-fees-explained",
+    title: "Cardano Staking Fees Explained | Fixed Fee vs Variable Fee",
+    description:
+      "Understand Cardano staking fees, including fixed fee, variable fee, and how effective fee can change each epoch based on rewards.",
+  },
+  {
+    key: "howToStakeAda",
+    href: "/how-to-stake-ada",
+    title: "How to Stake ADA | Step-by-Step Cardano Staking Guide",
+    description:
+      "Learn how to stake ADA safely with a Cardano stake pool while keeping full custody of your wallet.",
   },
 ] as const;
 

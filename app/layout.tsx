@@ -1,11 +1,37 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { siteConfig } from "../lib/site-config";
+import JsonLd from "../components/json-ld";
+import { organizationJsonLd, websiteJsonLd } from "../lib/seo";
 
 export const metadata: Metadata = {
   title: siteConfig.title,
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.url),
+  keywords: [
+    "cardano stake pool",
+    "cardano staking",
+    "ada staking",
+    "queen stake pool",
+    "QUEEN pool",
+    "cardano delegation",
+  ],
+  category: "cryptocurrency",
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  authors: [{ name: "Phil", url: siteConfig.url }],
+  referrer: "origin-when-cross-origin",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   alternates: {
     canonical: "/",
   },
@@ -47,7 +73,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <JsonLd data={[organizationJsonLd, websiteJsonLd]} />
+        {children}
+      </body>
     </html>
   );
 }

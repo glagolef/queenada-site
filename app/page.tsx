@@ -1,5 +1,12 @@
 import QueenAdaSite from "../components/queen-site";
+import JsonLd from "../components/json-ld";
+import { homeFaqJsonLd } from "../lib/seo";
 
 export default function Page() {
-  return <QueenAdaSite currentPage="home" />;
+  return (
+    <>
+      <JsonLd data={homeFaqJsonLd} />
+      <QueenAdaSite currentPage="home" />
+    </>
+  );
 }

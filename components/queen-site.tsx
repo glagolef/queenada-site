@@ -439,6 +439,30 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
         </Panel>
       </Container>
 
+      <Container className="pb-10">
+        <Panel className="p-8">
+          <SectionEyebrow>Cardano staking resources</SectionEyebrow>
+          <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Guides for informed delegators</h2>
+          <div className={`mt-6 grid gap-3 ${compact ? "grid-cols-1" : "lg:grid-cols-3"}`}>
+            <LinkCard
+              href="/best-cardano-stake-pool"
+              label="Best Cardano Stake Pool Criteria"
+              subtext="How to evaluate reliability, decentralization, fees, and operator accountability."
+            />
+            <LinkCard
+              href="/cardano-staking-fees-explained"
+              label="Cardano Staking Fees Explained"
+              subtext="Understand fixed fee, variable fee, and effective fee in plain language."
+            />
+            <LinkCard
+              href="/how-to-stake-ada"
+              label="How to Stake ADA"
+              subtext="Step-by-step Cardano staking guide while keeping full wallet custody."
+            />
+          </div>
+        </Panel>
+      </Container>
+
       <Container className="pb-20">
         <Panel className="border-sky-300/20 bg-gradient-to-r from-fuchsia-500/10 to-sky-500/10 p-6 sm:p-8">
           <div className="text-sm uppercase tracking-[0.3em] text-sky-200">Security</div>
