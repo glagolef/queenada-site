@@ -59,10 +59,12 @@ function getKesRotationCount(now = new Date()) {
 async function main() {
   const [pool, history] = await Promise.all([
     getJson(`/pools/${POOL_ID}`),
-    getJson(`/pools/${POOL_ID}/history?page=1&count=1&order=desc`),
+    getJson(`/pools/${POOL_ID}/history?page=1&count=2&order=desc`),
   ]);
 
-  const latestHistory = Array.isArray(history) ? (history[0] ?? {}) : {};
+  const latestHistory = Array.isArray(history)
+    ? (history[1] ?? history[0] ?? {})
+    : {};
 
   const rewardsRaw =
     latestHistory.rewards != null ? Number(latestHistory.rewards) : null;

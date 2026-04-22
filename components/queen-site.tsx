@@ -585,7 +585,7 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
         <Panel className="p-8">
           <SectionEyebrow>Why these metrics matter</SectionEyebrow>
           <p className="mt-4 text-sm leading-7 text-stone-300">
-            Metrics help delegators assess the pool more clearly. Live stake and delegator count show how much trust the pool has earned, saturation shows how close it is to the optimal level, fee structure shows what the operator charges, and block production helps show whether the pool is actually performing over time.
+            These metrics give delegators a practical snapshot of the pool. Stake, delegators, and saturation show the pool's current position, fee settings show the advertised cost structure, and block production helps show how the pool is performing over time.
           </p>
         </Panel>
         <Panel className="p-8">
@@ -627,7 +627,7 @@ function FeesPage({ metrics }: { metrics: Metrics | null }) {
           <div className="mt-4" />
           <StatCard label="Fixed fee" value={metrics?.fixedFee ?? "—"} />
           <div className="mt-4" />
-          <StatCard label="Effective fee" value={effectiveFee} hint="Calculated from latest epoch" />
+          <StatCard label="Effective fee" value={effectiveFee} hint="Calculated from the latest settled epoch" />
         </Panel>
 
         <Panel className="p-8">
