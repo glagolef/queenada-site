@@ -350,7 +350,6 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
               <StatCard label="Saturation" value={metrics?.saturation ?? "—"} />
               <StatCard label="Delegators" value={metrics?.delegators ?? "—"} />
               <StatCard label="Lifetime blocks" value={metrics?.lifetimeBlocks ?? "—"} />
-              <StatCard label="Effective fee" value={getEffectiveFee(metrics) ?? "—"} />
               <StatCard label="Variable fee" value={metrics?.variableFee ?? "—"} />
               <StatCard label="Fixed fee" value={metrics?.fixedFee ?? "—"} hint="Updated hourly" />
             </div>
@@ -511,7 +510,7 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
   const effectiveFee = getEffectiveFee(metrics) ?? "—";
   const updatedAtLabel = formatUpdatedAt(metrics?.updatedAt);
   const kesRotations = metrics?.kesRotations != null ? String(metrics.kesRotations) : "—";
-  const metricCards = [
+  const compactMetricCards = [
     { label: "Live stake", value: metrics?.liveStake ?? "—" },
     { label: "Saturation", value: metrics?.saturation ?? "—" },
     { label: "Delegators", value: metrics?.delegators ?? "—" },
@@ -523,6 +522,7 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
     { label: "Effective fee", value: effectiveFee },
     { label: "KES Rotations", value: kesRotations },
   ];
+  const desktopMetricCards = compactMetricCards.filter((metric) => metric.label !== "Effective fee");
 
   return (
     <Container className="relative z-10 py-20">
@@ -536,8 +536,14 @@ function PerformancePage({ metrics }: { metrics: Metrics | null }) {
         }
       />
 
-      <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        {metricCards.map((metric) => (
+      <div className="mt-10 grid grid-cols-2 gap-4 xl:hidden">
+        {compactMetricCards.map((metric) => (
+          <StatCard key={metric.label} label={metric.label} value={metric.value} />
+        ))}
+      </div>
+
+      <div className="mt-10 hidden gap-4 xl:grid xl:grid-cols-3">
+        {desktopMetricCards.map((metric) => (
           <StatCard key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </div>
