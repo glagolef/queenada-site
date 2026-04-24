@@ -351,7 +351,7 @@ function HomePage({ metrics }: { metrics: Metrics | null }) {
               <StatCard label="Delegators" value={metrics?.delegators ?? "—"} />
               <StatCard label="Lifetime blocks" value={metrics?.lifetimeBlocks ?? "—"} />
               <StatCard label="Variable fee" value={metrics?.variableFee ?? "—"} />
-              <StatCard label="Fixed fee" value={metrics?.fixedFee ?? "—"} hint="Updated hourly" />
+              <StatCard label="Fixed fee" value={metrics?.fixedFee ?? "—"} />
             </div>
 
             <div className="mt-4">
