@@ -1,7 +1,6 @@
+import HomeFaqJsonLd from "../components/home-faq-jsonld";
 import QueenAdaSite from "../components/queen-site";
-import JsonLd from "../components/json-ld";
 import { getMetrics } from "../lib/get-metrics";
-import { homeFaqJsonLd } from "../lib/seo";
 
 export const revalidate = 3600;
 
@@ -10,7 +9,7 @@ export default async function Page() {
 
   return (
     <>
-      <JsonLd data={homeFaqJsonLd} />
+      <HomeFaqJsonLd />
       <QueenAdaSite currentPage="home" metrics={metrics} />
     </>
   );
